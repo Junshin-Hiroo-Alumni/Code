@@ -76,26 +76,28 @@ def generate_diff(old_file, new_file, out_file):
                 out_lines.append("]")
                 out_lines.append("")
         elif opcode == 'delete':
+            total_deleted_articles = 0
             for block in old_blocks[i1:i2]:
                 out_lines.append("#diff-del-block[")
                 out_lines.append(block)
                 out_lines.append("]")
+                total_deleted_articles += block.count("#article[")
                 
-                article_count = block.count("#article[")
-                if article_count > 0:
-                    out_lines.append(f"#article-counter.update(c => c - {article_count})")
-                    
-                out_lines.append("")
+            if total_deleted_articles > 0:
+                out_lines.append(f"#article-counter.update(c => c - {total_deleted_articles})")
+            out_lines.append("")
+            
         elif opcode == 'replace':
+            total_deleted_articles = 0
             for block in old_blocks[i1:i2]:
                 out_lines.append("#diff-del-block[")
                 out_lines.append(block)
                 out_lines.append("]")
+                total_deleted_articles += block.count("#article[")
                 
-                article_count = block.count("#article[")
-                if article_count > 0:
-                    out_lines.append(f"#article-counter.update(c => c - {article_count})")
-                out_lines.append("")
+            if total_deleted_articles > 0:
+                out_lines.append(f"#article-counter.update(c => c - {total_deleted_articles})")
+            out_lines.append("")
                 
             for block in new_blocks[j1:j2]:
                 out_lines.append("#diff-add-block[")
