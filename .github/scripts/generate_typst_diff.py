@@ -46,7 +46,7 @@ def generate_diff(old_file, new_file, out_file):
   width: 100%,
   spacing: 0em
 )[
-  #text(fill: rgb("cf222e"), strike: true)[#body]
+  #text(fill: rgb("cf222e"))[#strike[#body]]
 ]
 
 #let diff-add-block(body) = block(
