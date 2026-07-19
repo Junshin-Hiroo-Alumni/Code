@@ -85,7 +85,7 @@ def generate_diff(old_file, new_file, out_file):
                 out_lines.append("")
 
     with open(out_file, 'w', encoding='utf-8') as f:
-        f.write('\\n'.join(out_lines))
+        f.write('\n'.join(out_lines))
 
 if __name__ == '__main__':
     generate_diff(sys.argv[1], sys.argv[2], sys.argv[3])
