@@ -60,6 +60,17 @@ def generate_diff(old_file, new_file, out_file):
 )[
   #text(fill: rgb("1a7f37"))[#body]
 ]
+
+#set page(
+  header: align(right + top)[
+    #rect(fill: rgb("f8f9fa"), stroke: 0.5pt + luma(200), inset: 5pt, radius: 2pt)[
+      #text(size: 8pt)[
+        #text(fill: rgb("cf222e"))[■ 削除部分] \\
+        #text(fill: rgb("1a7f37"))[■ 追加部分]
+      ]
+    ]
+  ]
+)
 // -------------------
 """
     out_lines.append(diff_macros)
