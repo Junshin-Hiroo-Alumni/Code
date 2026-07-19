@@ -23,22 +23,27 @@ jobs:
       - name: Setup Typst
         uses: typst-community/setup-typst@v3
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
       - name: Install Japanese fonts
         run: |
           sudo apt-get update -y
           sudo apt-get install -y fonts-noto-cjk
           fc-cache -fv
 
-      - name: Compile Base Document
-        run: typst compile base/main.typ base/old.pdf
-
-      - name: Compile PR Document
-        run: typst compile pr/main.typ pr/new.pdf
-
-      - name: Generate PDF Diff
+      - name: Generate Typst Diff Source
         run: |
-          docker run --rm -v ${{ github.workspace }}:/work ghcr.io/nowsprinting/diff-pdf \
-            --output-diff=/work/pr/diff.pdf /work/base/old.pdf /work/pr/new.pdf || true
+          python pr/.github/scripts/generate_typst_diff.py base/main.typ pr/main.typ pr/diff.typ
+
+      - name: Compile Diff PDF
+        run: |
+          # ワーキングディレクトリをprに移動してからコンパイルする
+          # (相対パスでの画像やインポートがある場合に備えるため)
+          cd pr
+          typst compile diff.typ diff.pdf
 
       - name: Upload Diff Artifact
         uses: actions/upload-artifact@v4
