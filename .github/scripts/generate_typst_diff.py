@@ -43,8 +43,9 @@ def generate_diff(old_file, new_file, out_file):
   fill: rgb("ffebe9"),
   stroke: (left: 4pt + rgb("cf222e")),
   inset: (top: 8pt, bottom: 8pt, left: 10pt, right: 10pt),
-  width: 100%,
-  spacing: 0em
+  above: 1.2em,
+  below: 1.2em,
+  width: 100%
 )[
   #text(fill: rgb("cf222e"))[#strike[#body]]
 ]
@@ -53,19 +54,11 @@ def generate_diff(old_file, new_file, out_file):
   fill: rgb("e6ffec"),
   stroke: (left: 4pt + rgb("1a7f37")),
   inset: (top: 8pt, bottom: 8pt, left: 10pt, right: 10pt),
-  width: 100%,
-  spacing: 0em
+  above: 1.2em,
+  below: 1.2em,
+  width: 100%
 )[
   #text(fill: rgb("1a7f37"))[#body]
-]
-
-#place(top + right, dx: 15mm, dy: -15mm)[
-  #rect(fill: rgb("f8f9fa"), stroke: 0.5pt + luma(200), inset: 5pt, radius: 2pt)[
-    #text(size: 8pt)[
-      #text(fill: rgb("cf222e"))[■ 削除部分] \\
-      #text(fill: rgb("1a7f37"))[■ 追加部分]
-    ]
-  ]
 ]
 // -------------------
 """
