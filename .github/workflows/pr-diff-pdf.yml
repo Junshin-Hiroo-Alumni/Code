@@ -1,42 +1,48 @@
-name: Generate PR Diff PDF
+name: Typst Visual PDF Diff
 
 on:
   pull_request:
-    branches: [main, master]
+    paths:
+      - '**/*.typ'
 
 jobs:
-  generate-pdf:
+  build-diff:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout Base Branch
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          ref: ${{ github.event.pull_request.base.ref }}
+          path: base
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Checkout PR Branch
+        uses: actions/checkout@v4
         with:
-          node-version: "20"
+          path: pr
 
-      - name: Install dependencies
+      - name: Setup Typst
+        uses: typst-community/setup-typst@v3
+
+      - name: Compile Base Document
+        run: typst compile base/main.typ base/old.pdf
+
+      - name: Compile PR Document
+        run: typst compile pr/main.typ pr/new.pdf
+
+      - name: Install diff-pdf
         run: |
-          npm install -g diff2html-cli
-          npm install puppeteer
+          sudo apt-get update
+          sudo apt-get install -y diff-pdf
 
-      - name: Generate Diff
+      - name: Generate PDF Diff
         run: |
-          git diff origin/${{ github.base_ref }}...HEAD > changes.diff
+          # diff-pdfは差分がある場合に終了コード1を返すため、
+          # || true をつけてActionがエラーで止まらないようにします。
+          diff-pdf --output-diff=pr/diff.pdf base/old.pdf pr/new.pdf || true
 
-      - name: Convert Diff to HTML
-        run: |
-          diff2html -i file -s side -F changes.html -- changes.diff
-
-      - name: Convert HTML to PDF
-        run: |
-          node .github/scripts/generate_pdf.js changes.html changes.pdf
-
-      - name: Upload PDF
+      - name: Upload Diff Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: pr-diff-pdf
-          path: changes.pdf
+          name: typst-visual-diff
+          path: pr/diff.pdf
+          retention-days: 7
