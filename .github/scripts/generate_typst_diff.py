@@ -39,8 +39,34 @@ def generate_diff(old_file, new_file, out_file):
     
     diff_macros = """
 // --- Diff Macros ---
-#let diff-del-block(body) = block(fill: rgb("ffe6e6"), stroke: red, inset: 10pt, width: 100%, radius: 4pt, spacing: 1em)[#body]
-#let diff-add-block(body) = block(fill: rgb("e6ffe6"), stroke: green, inset: 10pt, width: 100%, radius: 4pt, spacing: 1em)[#body]
+#let diff-del-block(body) = block(
+  fill: rgb("ffebe9"),
+  stroke: (left: 4pt + rgb("cf222e")),
+  inset: (top: 8pt, bottom: 8pt, left: 10pt, right: 10pt),
+  width: 100%,
+  spacing: 0em
+)[
+  #text(fill: rgb("cf222e"), strike: true)[#body]
+]
+
+#let diff-add-block(body) = block(
+  fill: rgb("e6ffec"),
+  stroke: (left: 4pt + rgb("1a7f37")),
+  inset: (top: 8pt, bottom: 8pt, left: 10pt, right: 10pt),
+  width: 100%,
+  spacing: 0em
+)[
+  #text(fill: rgb("1a7f37"))[#body]
+]
+
+#place(top + right, dx: 15mm, dy: -15mm)[
+  #rect(fill: rgb("f8f9fa"), stroke: 0.5pt + luma(200), inset: 5pt, radius: 2pt)[
+    #text(size: 8pt)[
+      #text(fill: rgb("cf222e"))[■ 削除部分] \\
+      #text(fill: rgb("1a7f37"))[■ 追加部分]
+    ]
+  ]
+]
 // -------------------
 """
     out_lines.append(diff_macros)
