@@ -29,16 +29,10 @@ jobs:
       - name: Compile PR Document
         run: typst compile pr/main.typ pr/new.pdf
 
-      - name: Install diff-pdf
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y diff-pdf
-
       - name: Generate PDF Diff
         run: |
-          # diff-pdfは差分がある場合に終了コード1を返すため、
-          # || true をつけてActionがエラーで止まらないようにします。
-          diff-pdf --output-diff=pr/diff.pdf base/old.pdf pr/new.pdf || true
+          docker run --rm -v ${{ github.workspace }}:/work ghcr.io/nowsprinting/diff-pdf \
+            --output-diff=/work/pr/diff.pdf /work/base/old.pdf /work/pr/new.pdf || true
 
       - name: Upload Diff Artifact
         uses: actions/upload-artifact@v4
