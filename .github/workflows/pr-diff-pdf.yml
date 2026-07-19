@@ -1,0 +1,42 @@
+name: Generate PR Diff PDF
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  generate-pdf:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: |
+          npm install -g diff2html-cli
+          npm install puppeteer
+
+      - name: Generate Diff
+        run: |
+          git diff origin/${{ github.base_ref }}...HEAD > changes.diff
+
+      - name: Convert Diff to HTML
+        run: |
+          diff2html -i file -s side -F changes.html -- changes.diff
+
+      - name: Convert HTML to PDF
+        run: |
+          node .github/scripts/generate_pdf.js changes.html changes.pdf
+
+      - name: Upload PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-diff-pdf
+          path: changes.pdf
